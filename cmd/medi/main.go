@@ -17,6 +17,7 @@ package main
 
 import (
 	"fmt"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 
@@ -38,6 +39,10 @@ func main() {
 	app.Name = "medi"
 	app.Usage = "medibloc command line interface"
 	app.Version = versionStr()
+
+	//go func() {
+	//	log.Println(http.ListenAndServe("localhost:6060", nil))
+	//}()
 
 	app.Run(os.Args)
 }
