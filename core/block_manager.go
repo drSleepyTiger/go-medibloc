@@ -491,19 +491,19 @@ func (bm *BlockManager) handleReceiveBlock(msg net.Message) {
 	if err != nil {
 		return
 	}
-	ok := bm.activateSync(bd)
-	if !ok {
-		err = bm.requestMissingBlock(msg.MessageFrom(), bd)
-		if err != nil {
-			logging.Console().WithFields(logrus.Fields{
-				"sender": msg.MessageFrom(),
-				"block":  bd,
-				"err":    err,
-			}).Error("Failed to request missing block.")
+	//ok := bm.activateSync(bd)
+	//if !ok {
+	err = bm.requestMissingBlock(msg.MessageFrom(), bd)
+	if err != nil {
+		logging.Console().WithFields(logrus.Fields{
+			"sender": msg.MessageFrom(),
+			"block":  bd,
+			"err":    err,
+		}).Error("Failed to request missing block.")
 
-			return
-		}
+		return
 	}
+	//}
 
 	if msg.MessageType() == MessageTypeNewBlock {
 		bm.Relay(bd)
