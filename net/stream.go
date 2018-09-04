@@ -230,7 +230,6 @@ func (s *Stream) Write(data []byte) error {
 	defer s.syncMutex.Unlock()
 
 	if s.stream == nil {
-		s.Close(ErrStreamIsNotConnected)
 		return ErrStreamIsNotConnected
 	}
 
@@ -245,7 +244,6 @@ func (s *Stream) Write(data []byte) error {
 			"err":    err,
 			"stream": s.String(),
 		}).Warn("Failed to send message to peer.")
-		s.Close(err)
 		return err
 	}
 	s.latestWriteAt = time.Now().Unix()
@@ -263,6 +261,14 @@ func (s *Stream) WriteMedMessage(message *MedMessage) error {
 	metricsPacketsOutByMessageName(message.MessageName(), message.Length())
 
 	err := s.Write(message.Content())
+	if err != nil {
+		logging.WithFields(logrus.Fields{
+			"err":    err,
+			"stream": s.String(),
+		}).Warn("Failed to write to peer. closing...")
+		s.Close(err)
+	}
+
 	message.FlagWriteMessageAt()
 
 	/*
