@@ -273,25 +273,26 @@ func (bm *BlockManager) push(bd *BlockData) error {
 		}).Error("Failed to set new tail block.")
 		return err
 	}
-	//if len(revertBlocks) != 0 {
+
+	revertBlocks = nil
+
 	if err := bm.rearrangeTransactions(revertBlocks, newBlocks); err != nil {
 		return err
 	}
-	//}
 
-	newLIB := bm.consensus.FindLIB(bm.bc)
-	err = bm.bc.SetLIB(newLIB)
-	if err != nil {
-		logging.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Failed to set LIB.")
-	}
+	//newLIB := bm.consensus.FindLIB(bm.bc)
+	//err = bm.bc.SetLIB(newLIB)
+	//if err != nil {
+	//	logging.WithFields(logrus.Fields{
+	//		"err": err,
+	//	}).Error("Failed to set LIB.")
+	//}
 
 	logging.Console().WithFields(logrus.Fields{
 		"block": bd,
 		"ts":    time.Unix(bd.Timestamp(), 0),
 		"tail":  newTail,
-		"lib":   newLIB,
+		//"lib":   newLIB,
 	}).Info("Block pushed.")
 
 	return nil
